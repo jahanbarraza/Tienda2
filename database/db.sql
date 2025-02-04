@@ -9,16 +9,21 @@ CREATE TABLE usuarios (
     fecha_creacion TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE productos (
-    producto_id SERIAL PRIMARY KEY,
-    nombre VARCHAR(200) NOT NULL,
-    descripcion TEXT,
-    precio DECIMAL(10,2) NOT NULL,
-    stock INT NOT NULL DEFAULT 0,
-    categoria VARCHAR(100),
-    codigo_barra VARCHAR(50) UNIQUE,
-    fecha_creacion TIMESTAMP DEFAULT NOW()
+CREATE TABLE public.productos (
+	producto_id serial4 NOT NULL,
+	nombre varchar(200) NOT NULL,
+	descripcion text NULL,
+	precio numeric(10, 2) NOT NULL,
+	stock int4 DEFAULT 0 NOT NULL,
+	codigo_barra varchar(50) NULL,
+	fecha_creacion timestamp DEFAULT now() NULL,
+	categoria_id int4 NULL,
+	CONSTRAINT productos_codigo_barra_key UNIQUE (codigo_barra),
+	CONSTRAINT productos_pkey PRIMARY KEY (producto_id),
+	CONSTRAINT productos_unique UNIQUE (nombre),
+	CONSTRAINT productos_categoria_id_fkey FOREIGN KEY (categoria_id) REFERENCES public.categorias(categoria_id) ON DELETE SET NULL
 );
+
 
 CREATE TABLE clientes (
     cliente_id SERIAL PRIMARY KEY,
@@ -73,3 +78,4 @@ CREATE TABLE categorias (
 
 ALTER TABLE productos
 ADD COLUMN categoria_id INT REFERENCES categorias(categoria_id) ON DELETE SET NULL;
+
