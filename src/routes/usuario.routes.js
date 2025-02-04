@@ -1,5 +1,4 @@
 import {Router} from 'express';
-import { pool } from '../db.js';
 import { UsuarioService } from '../services/usuarioService.js';
 import { validatorHandler } from '../middlewares/validator.handler.js'
 import {getUsuarioSchema, createUsuarioSchema, updateUsuarioSchema } from '../schemas/usuarioSchema.js'
@@ -13,7 +12,7 @@ router.get('/', async(req, res)=>{
   res.json(usuarios)
 } );
 
-router.get('/:id', 
+router.get('/:id',
   validatorHandler(getUsuarioSchema, 'params'),
   async(req, res, next) => {
     try {
@@ -26,7 +25,7 @@ router.get('/:id',
   }
 );
 
-router.post('/', 
+router.post('/',
   validatorHandler(createUsuarioSchema, 'body'),
   async(req, res) => {
   const body = req.body;
@@ -34,7 +33,7 @@ router.post('/',
   res.status(201).json(newUsuario)
 });
 
-router.patch('/:id', 
+router.patch('/:id',
   validatorHandler(getUsuarioSchema, 'params'),
   validatorHandler(updateUsuarioSchema, 'body'),
   async(req, res, next) => {
@@ -48,7 +47,7 @@ router.patch('/:id',
   }
 });
 
-router.delete('/:id', 
+router.delete('/:id',
   validatorHandler(getUsuarioSchema, 'params'),
   async( req, res, next) => {
     try {

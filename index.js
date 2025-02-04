@@ -1,4 +1,6 @@
+import {config}  from './src/config.js'
 import express from 'express'
+
 import routerApi from './src/routes/index.js'
 import {logErrors, boomErrorHandler, errorHandler} from './src/middlewares/error.handler.js'
 
