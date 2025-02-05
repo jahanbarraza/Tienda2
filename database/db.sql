@@ -43,13 +43,16 @@ CREATE TABLE ventas (
     total DECIMAL(10,2) NOT NULL
 );
 
-CREATE TABLE detalle_ventas (
-    detalle_id SERIAL PRIMARY KEY,
-    venta_id INT REFERENCES ventas(venta_id) ON DELETE CASCADE,
-    producto_id INT REFERENCES productos(producto_id) ON DELETE CASCADE,
-    cantidad INT NOT NULL CHECK (cantidad > 0),
-    precio_unitario DECIMAL(10,2) NOT NULL,
-    subtotal DECIMAL(10,2) NOT NULL
+CREATE TABLE public.detalle_ventas (
+	detalle_id serial4 NOT NULL,
+	venta_id int4 NULL,
+	producto_id int4 NULL,
+	cantidad int4 NOT NULL,
+	precio_unitario numeric(10, 2) NOT NULL,
+	CONSTRAINT detalle_ventas_cantidad_check CHECK ((cantidad > 0)),
+	CONSTRAINT detalle_ventas_pkey PRIMARY KEY (detalle_id),
+	CONSTRAINT detalle_ventas_producto_id_fkey FOREIGN KEY (producto_id) REFERENCES public.productos(producto_id) ON DELETE CASCADE,
+	CONSTRAINT detalle_ventas_venta_id_fkey FOREIGN KEY (venta_id) REFERENCES public.ventas(venta_id) ON DELETE CASCADE
 );
 
 CREATE TABLE pagos (

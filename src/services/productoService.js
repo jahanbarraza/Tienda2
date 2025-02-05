@@ -71,4 +71,10 @@ export class ProductoService {
             const usuario = await pool.query(`DELETE  FROM productos WHERE producto_id = ${id}`)
             return rows[0]
   }
+/*
+  async registroInv () {
+    console.log('entro')
+    const respuesta = {"message": "Inventario Registrado con Exito"}
+    return respuesta
+  }*/
 }
