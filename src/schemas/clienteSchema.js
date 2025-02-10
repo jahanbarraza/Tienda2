@@ -4,7 +4,7 @@ const id = Joi.number();
 const nombre = Joi.string().min(3).max(20);
 const apellido = Joi.string().min(3).max(20);
 const email = Joi.string().email();
-const telefono = Joi.number().max(10);
+const telefono = Joi.number();
 const direccion = Joi.string();
 
 export const createClienteSchema = Joi.object({

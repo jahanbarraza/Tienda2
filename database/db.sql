@@ -5,7 +5,7 @@ CREATE TABLE usuarios (
     email VARCHAR(150) UNIQUE NOT NULL,
     telefono VARCHAR(20),
     contraseña TEXT NOT NULL,
-    rol VARCHAR(50) CHECK (rol IN ('admin', 'vendedor')) NOT NULL,
+    rol VARCHAR(50) CHECK (rol IN ('admin', 'vendedor', 'cliente')) NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT NOW()
 );
 
