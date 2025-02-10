@@ -63,13 +63,16 @@ CREATE TABLE pagos (
     fecha TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE inventario (
-    inventario_id SERIAL PRIMARY KEY,
-    producto_id INT REFERENCES productos(producto_id) ON DELETE CASCADE,
-    tipo_movimiento VARCHAR(50) CHECK (tipo_movimiento IN ('entrada', 'salida')),
-    cantidad INT NOT NULL CHECK (cantidad > 0),
-    fecha TIMESTAMP DEFAULT NOW(),
-    usuario_id INT REFERENCES usuarios(usuario_id) ON DELETE SET NULL
+CREATE TABLE public.inventario (
+	inventario_id serial4 NOT NULL,
+	producto_id int4 NULL,
+	tipo_movimiento varchar(50) NULL,
+	cantidad int4 NOT NULL,
+	fecha timestamp DEFAULT now() NULL,
+	CONSTRAINT inventario_cantidad_check CHECK ((cantidad > 0)),
+	CONSTRAINT inventario_pkey PRIMARY KEY (inventario_id),
+	CONSTRAINT inventario_tipo_movimiento_check CHECK (((tipo_movimiento)::text = ANY ((ARRAY['entrada'::character varying, 'salida'::character varying])::text[]))),
+	CONSTRAINT inventario_producto_id_fkey FOREIGN KEY (producto_id) REFERENCES public.productos(producto_id) ON DELETE CASCADE
 );
 
 CREATE TABLE categorias (

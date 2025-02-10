@@ -7,14 +7,9 @@ import {logErrors, boomErrorHandler, errorHandler} from './src/middlewares/error
 const app = express();
 const port = process.env.PORT || 3000;
 
-
 app.use(express.json());
 
-
-
 routerApi(app);
-
-
 
 app.use(logErrors);
 app.use(boomErrorHandler);

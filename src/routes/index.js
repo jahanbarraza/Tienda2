@@ -10,6 +10,7 @@ import detalle_venta from './detalle_venta.routes.js'
 function routerApi(app) {
   const router = Router();
   app.use('/api/v1', router)
+
   router.use('/usuarios', usuarios)
   router.use('/categorias', categorias)
   router.use('/productos', productos)

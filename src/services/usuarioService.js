@@ -19,12 +19,18 @@ export class UsuarioService {
     }
 
     async findOne( id ) {
+      try {
         const { rows } = await pool.query(`SELECT * FROM usuarios WHERE user_id = $1`, [id])
 
         if ( rows.length === 0) {
             throw boom.notFound('Usuario no encontrado');
         }
         return rows[0]
+      } catch (error) {
+        console.log('UsuarioService -- findOne',error);
+        throw error
+      }
+
     }
 
     async create( data ){
@@ -44,6 +50,12 @@ export class UsuarioService {
         const filas = Object.keys(data); // Extraer las propiedades enviadas
         if (filas.length === 0) {
             throw boom.badRequest('No se proporcionaron datos para actualizar');
+        }
+
+        // key value
+        const a = {
+          nombre : "jahan",
+          apellido: "barraza"
         }
 
         const valores = Object.values(data);

@@ -9,7 +9,14 @@ const total = Joi.number().max(10000000);
 export const createVentaSchema = Joi.object({
   usuario_id: usuario_id.required(),
   cliente_id: cliente_id.required(),
-  total: total.required()
+  total: total,
+  productos: Joi.array().items(
+    Joi.object({
+      producto_id: Joi.number().required(),
+      cantidad: Joi.number().required(),
+      precio_unitario: Joi.number().required()
+    })
+  ).required()
 });
 
 export const updateVentaSchema = Joi.object({

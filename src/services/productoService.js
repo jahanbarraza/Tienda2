@@ -21,7 +21,6 @@ export class ProductoService {
 
   async findOne(id){
      const { rows } = await pool.query(`SELECT * FROM productos WHERE producto_id = $1`, [id])
-
             if ( rows.length === 0) {
                 throw boom.notFound('Producto no encontrado');
             }
@@ -29,10 +28,21 @@ export class ProductoService {
   }
 
   async create(data) {
-    const {rows} = await pool.query(
+    if (!data.nombre || data.precio <= 0 || data.stock < 0) {
+      throw boom.badRequest('Datos inválidos. Verifica nombre, precio y stock')
+    }
+
+    const {rows: productoRows} = await pool.query(
       'INSERT INTO productos (nombre, descripcion, precio, stock, codigo_barra, categoria_id ) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
       [data.nombre, data.descripcion, data.precio, data.stock, data.codigo_barra, data.categoria_id]);
-  return rows[0]
+    const producto_id = productoRows[0].producto_id; //aqui obtenemos el Id del producto creado
+
+
+    //insertar en la tabla inventario automaticamente
+    const invetnarioQuery = 'INSERT INTO inventario (producto_id, stock) VALUES ($1, $2) RETURNING *'
+    const { rows: inventarioRows } = await pool.query(invetnarioQuery, [producto_id, data.stock])
+
+    return { producto: productoRows, invetario: inventarioRows}
   }
 
 
@@ -63,12 +73,12 @@ export class ProductoService {
   }
 
   async delete(id) {
-    const { rows } = await pool.query(`SELECT * FROM productos WHERE producto_id = $1`, [id])
+    const { rows } = await pool.query(`SELECT * FROM productos WHERE producto_id = $1 RETURNING producto_id`, [id])
 
             if ( rows.length === 0) {
                 throw boom.notFound('Producto no encontrado');
             }
-            const usuario = await pool.query(`DELETE  FROM productos WHERE producto_id = ${id}`)
+            await pool.query(`DELETE  FROM productos WHERE producto_id = ${id}`)
             return rows[0]
   }
 /*

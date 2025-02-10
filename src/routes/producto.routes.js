@@ -55,26 +55,14 @@ router.patch('/:id',
     validatorHandler(getProductoSchema, 'params'),
     async(req, res, next)=> {
       try {
-        const {id} = req.params;
+        const { id } = { ...req.params };
         const producto = await servicio.delete(id);
-        res.send('Producto Eliminado')
+        res.json({ ...producto, msj : 'Producto Eliminado'})
       } catch (error) {
         next(error)
       }
     }
   )
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 export default router ;
