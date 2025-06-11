@@ -59,7 +59,7 @@ router.delete('/:id',
     try {
       const {id} = req.params;
       const categoria = await servicio.delete(id)
-      res.send('Usuario Eliminado')
+      res.json({ msj : 'Categoría Eliminada'})
     } catch (error) {
       next(error)
     }

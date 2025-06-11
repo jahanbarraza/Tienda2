@@ -39,10 +39,10 @@ export class ProductoService {
 
 
     //insertar en la tabla inventario automaticamente
-    const invetnarioQuery = 'INSERT INTO inventario (producto_id, stock) VALUES ($1, $2) RETURNING *'
-    const { rows: inventarioRows } = await pool.query(invetnarioQuery, [producto_id, data.stock])
+    const inventarioQuery = 'INSERT INTO inventario (producto_id, tipo_movimiento, cantidad) VALUES ($1, $2, $3) RETURNING *'
+    const { rows: inventarioRows } = await pool.query(inventarioQuery, [producto_id, 'entrada', data.stock])
 
-    return { producto: productoRows, invetario: inventarioRows}
+    return { producto: productoRows, inventario: inventarioRows}
   }
 
 
@@ -73,12 +73,12 @@ export class ProductoService {
   }
 
   async delete(id) {
-    const { rows } = await pool.query(`SELECT * FROM productos WHERE producto_id = $1 RETURNING producto_id`, [id])
+    const { rows } = await pool.query(`SELECT * FROM productos WHERE producto_id = $1`, [id])
 
             if ( rows.length === 0) {
                 throw boom.notFound('Producto no encontrado');
             }
-            await pool.query(`DELETE  FROM productos WHERE producto_id = ${id}`)
+            await pool.query(`DELETE FROM productos WHERE producto_id = $1`, [id])
             return rows[0]
   }
 /*
