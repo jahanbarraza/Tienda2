@@ -80,6 +80,7 @@ export class CategoriaService {
       throw boom.notFound('Categoría no encontrada');
     }
     await pool.query(`DELETE FROM categorias WHERE categoria_id = $1`, [id])
+    console.log(`Categoría con ID ${id} eliminada correctamente.`);
     return rows[0]
   }
 
