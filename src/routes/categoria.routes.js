@@ -55,7 +55,7 @@ router.patch('/:id',
 
 router.delete('/:id',
   validatorHandler(getCategoriaSchema, 'params'),
-  async(req, res, nest)=> {
+  async(req, res, next)=> {
     try {
       const {id} = req.params;
       const categoria = await servicio.delete(id)
