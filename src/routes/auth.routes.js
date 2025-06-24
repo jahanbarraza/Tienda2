@@ -28,7 +28,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     // Verificar contraseña (en un caso real debería estar hasheada)
-    if (usuario.contraseña !== password) {
+    if (usuario.contrasena !== password) {
       return res.status(401).json({
         success: false,
         message: 'Credenciales inválidas'

@@ -8,7 +8,7 @@ export class ProductoService {
 
   constructor(){}
 
-  async find() {
+  /*async find() {
     return new Promise( async(resolve, reject )=> {
       try {
         const { rows } = await pool.query('SELECT * FROM productos')
@@ -17,7 +17,27 @@ export class ProductoService {
         reject(error)
       }
     })
-  }
+  }*/
+
+async find() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { rows } = await pool.query(`
+        SELECT 
+          p.*,
+          COALESCE(SUM(CASE WHEN i.tipo_movimiento = 'entrada' THEN i.cantidad ELSE 0 END), 0) -
+          COALESCE(SUM(CASE WHEN i.tipo_movimiento = 'salida' THEN i.cantidad ELSE 0 END), 0) AS stock_actual
+        FROM productos p
+        LEFT JOIN inventario i ON p.producto_id = i.producto_id
+        GROUP BY p.producto_id
+        ORDER BY p.producto_id;
+      `);
+      resolve(rows);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 
   async findOne(id){
      const { rows } = await pool.query(`SELECT * FROM productos WHERE producto_id = $1`, [id])

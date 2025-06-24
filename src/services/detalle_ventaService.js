@@ -16,7 +16,7 @@ export class DetalleVentaService {
     }
 
     //agregar un producto a la venta y descontamos del inventario
-    async create(data){
+/*    async create(data){
         const {rows} = await pool.query(
             `INSERT INTO detalle_ventas (venta_id, producto_id, cantidad, precio_unitario) VALUES ($1, $2, $3, $4) RETURNING *`,
                 [ data.venta_id, data.producto_id, data.cantidad, data.precio_unitario]
@@ -30,7 +30,51 @@ export class DetalleVentaService {
         return rows[0]
 
 
+    }*/
+    async create(data) {
+  try {
+    // Verificar stock disponible antes de hacer la salida
+    const { rows } = await pool.query(`
+      SELECT 
+        SUM(CASE WHEN tipo_movimiento = 'entrada' THEN cantidad ELSE 0 END) -
+        SUM(CASE WHEN tipo_movimiento = 'salida' THEN cantidad ELSE 0 END) AS stock_actual
+      FROM inventario
+      WHERE producto_id = $1
+    `, [data.producto_id]);
+
+    const stockDisponible = rows[0].stock_actual ?? 0;
+
+    if (stockDisponible < data.cantidad) {
+      throw new Error(`Stock insuficiente para el producto ${data.producto_id}. Disponible: ${stockDisponible}`);
     }
+
+    // Insertar en detalle_ventas
+    const { rows: detalleRows } = await pool.query(
+      `INSERT INTO detalle_ventas (venta_id, producto_id, cantidad, precio_unitario)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [data.venta_id, data.producto_id, data.cantidad, data.precio_unitario]
+    );
+
+    // Registrar movimiento de salida en inventario
+    await pool.query(
+      `INSERT INTO inventario (producto_id, tipo_movimiento, cantidad, fecha)
+       VALUES ($1, 'salida', $2, NOW())`,
+      [data.producto_id, data.cantidad]
+    );
+
+    return detalleRows[0];
+
+  } catch (error) {
+    console.error('❌ Error en detalle_ventaService.create:', {
+      data,
+      mensaje: error.message
+    });
+    throw error;
+  }
+}
+
+
 
     // eliminar un producto de la venta
     async delete(id) {
